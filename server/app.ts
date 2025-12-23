@@ -136,7 +136,7 @@ export async function createApp(options?: { disableStatic?: boolean }) {
         serveStatic(app);
     } else if (process.env.NODE_ENV !== "test") {
         // Only setup Vite in dev, not test or prod
-        const { setupVite } = await import("./vite");
+        const { setupVite } = await import("./vite.js");
         await setupVite(httpServer, app);
     }
 
