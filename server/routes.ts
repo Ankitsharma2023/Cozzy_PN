@@ -9,7 +9,7 @@ import {
   depositRequestSchema,
   withdrawRequestSchema,
   registerNodeRequestSchema,
-} from "../shared/schema.ts";
+} from "../shared/schema.js";
 
 export async function registerRoutes(
   httpServer: Server,
