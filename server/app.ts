@@ -5,6 +5,7 @@ import helmet from "helmet";
 import cors from "cors";
 import rateLimit from "express-rate-limit";
 import morgan from "morgan";
+
 import { registerRoutes } from "./routes.js";
 import { setupAuth } from "./auth.js";
 import { serveStatic } from "./static.js";
