@@ -108,7 +108,11 @@ export default function DashboardBlockchain() {
   const endSessionMutation = useMutation({
     mutationFn: async () => {
       if (!activeSession) return;
-      // In a real blockchain implementation, this would interact directly with the smart contracts
+      // First settle the session to store final cost, duration, and earned amounts
+      await apiRequest("POST", "/api/sessions/settle", {
+        sessionId: activeSession.id,
+      });
+      // Then end the session
       await apiRequest("POST", "/api/sessions/end", {
         sessionId: activeSession.id,
       });

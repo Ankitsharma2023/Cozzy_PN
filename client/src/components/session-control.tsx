@@ -66,6 +66,13 @@ export function SessionControl({
 
   const { connect: connectWallet } = useWallet();
 
+  // Clear analysis when session becomes inactive (disconnected)
+  useEffect(() => {
+    if (!session?.isActive) {
+      setAiAnalysis(null);
+    }
+  }, [session?.isActive]);
+
   useEffect(() => {
     if (!session?.isActive || !session.startedAt) {
       setElapsedTime(0);

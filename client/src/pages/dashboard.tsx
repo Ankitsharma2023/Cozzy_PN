@@ -103,6 +103,11 @@ export default function Dashboard() {
   const endSessionMutation = useMutation({
     mutationFn: async () => {
       if (!activeSession) return;
+      // First settle the session to store final cost, duration, and earned amounts
+      await apiRequest("POST", "/api/sessions/settle", {
+        sessionId: activeSession.id,
+      });
+      // Then end the session
       await apiRequest("POST", "/api/sessions/end", {
         sessionId: activeSession.id,
       });
