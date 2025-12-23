@@ -2,6 +2,11 @@
     "buildCommand": "npm run build",
     "outputDirectory": "dist/public",
     "framework": "vite",
+    "functions": {
+        "api/**": {
+            "runtime": "nodejs20.x"
+        }
+    },
     "rewrites": [
         {
             "source": "/api/(.*)",

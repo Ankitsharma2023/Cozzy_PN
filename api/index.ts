@@ -8,7 +8,7 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
         if (!app) {
             console.log("[API] Initializing app...");
             // Use dynamic import to catch top-level errors in server modules
-            const { createApp } = await import("../server/app");
+            const { createApp } = await import("../server/app.js");
             const result = await createApp({ disableStatic: true });
             app = result.app;
             console.log("[API] App initialized successfully");
