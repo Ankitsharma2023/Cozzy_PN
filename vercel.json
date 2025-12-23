@@ -1,5 +1,5 @@
 {
-    "buildCommand": "npm run build",
+    "buildCommand": "npm run db:push && npm run build",
     "outputDirectory": "dist/public",
     "framework": "vite",
     "rewrites": [
