@@ -11,7 +11,7 @@ import {
   nodes,
   sessions,
   transactions,
-} from "@shared/schema";
+} from "../shared/schema.js";
 import { db } from "./db.js";
 import { eq, desc, and, sql } from "drizzle-orm";
 
