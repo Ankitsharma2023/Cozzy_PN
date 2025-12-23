@@ -1,5 +1,5 @@
 {
-    "buildCommand": "npm install && npm run db:push && npm run build",
+    "buildCommand": "rm -rf package-lock.json node_modules/ && npm install && npm run db:push && npm run build",
     "outputDirectory": "dist/public",
     "framework": "vite",
     "rewrites": [
