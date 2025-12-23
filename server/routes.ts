@@ -1,8 +1,8 @@
 import type { Express } from "express";
 import { type Server } from "http";
-import { storage } from "./storage";
+import { storage } from "./storage.js";
 import { ethers } from "ethers";
-import { requireAuth } from "./middleware/auth";
+import { requireAuth } from "./middleware/auth.js";
 import {
   startSessionRequestSchema,
   settleSessionRequestSchema,

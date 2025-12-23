@@ -5,15 +5,15 @@ import helmet from "helmet";
 import cors from "cors";
 import rateLimit from "express-rate-limit";
 import morgan from "morgan";
-import { registerRoutes } from "./routes";
-import { setupAuth } from "./auth";
-import { serveStatic } from "./static";
+import { registerRoutes } from "./routes.js";
+import { setupAuth } from "./auth.js";
+import { serveStatic } from "./static.js";
 import { createServer } from "http";
-import { logger, stream } from "./logger";
+import { logger, stream } from "./logger.js";
 import { createClient } from "redis";
 import { RedisStore } from "connect-redis";
-import { setupSocketServer } from "./socket";
-import { register, httpRequestDurationMicroseconds } from "./metrics";
+import { setupSocketServer } from "./socket.js";
+import { register, httpRequestDurationMicroseconds } from "./metrics.js";
 
 export async function createApp(options?: { disableStatic?: boolean }) {
     const app = express();

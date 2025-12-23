@@ -12,7 +12,7 @@ import {
   sessions,
   transactions,
 } from "@shared/schema";
-import { db } from "./db";
+import { db } from "./db.js";
 import { eq, desc, and, sql } from "drizzle-orm";
 
 export interface IStorage {

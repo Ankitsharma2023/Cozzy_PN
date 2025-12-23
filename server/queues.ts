@@ -1,5 +1,5 @@
 import { Queue, QueueEvents } from 'bullmq';
-import { logger } from './logger';
+import { logger } from './logger.js';
 
 const connection = {
     host: process.env.REDIS_HOST || 'localhost',

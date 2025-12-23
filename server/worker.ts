@@ -1,6 +1,6 @@
 import { Worker } from 'bullmq';
-import { logger } from './logger';
-import { storage } from './storage';
+import { logger } from './logger.js';
+import { storage } from './storage.js';
 
 const connection = {
     host: process.env.REDIS_HOST || 'localhost',

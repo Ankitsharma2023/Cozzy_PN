@@ -1,6 +1,6 @@
 import { Server, Socket } from "socket.io";
 import { type Server as HttpServer } from "http";
-import { storage } from "./storage";
+import { storage } from "./storage.js";
 import { ethers } from "ethers";
 import crypto from "crypto";
 
