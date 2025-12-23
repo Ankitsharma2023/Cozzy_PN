@@ -1,0 +1,26 @@
+node_modules
+dist
+.DS_Store
+server/public
+vite.config.ts.*
+*.tar.gz
+
+
+
+# Security
+*.pem
+*.key
+
+# Editor/OS
+.vscode
+.idea
+
+# Blockchain Artifacts
+contracts/artifacts
+contracts/cache
+contracts/typechain-types
+# Environment
+.env
+.env.local
+.env.*
+.vercel

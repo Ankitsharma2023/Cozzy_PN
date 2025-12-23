@@ -1,0 +1,30 @@
+version: "3.8"
+
+services:
+  node-daemon:
+    build:
+      context: ./node-daemon
+      dockerfile: Dockerfile
+    image: x4pn-daemon:latest
+    container_name: x4pn-node
+    restart: always
+    cap_add:
+      - NET_ADMIN
+      - SYS_MODULE
+    sysctls:
+      - net.ipv4.ip_forward=1
+      - net.ipv4.conf.all.src_valid_mark=1
+    volumes:
+      - /lib/modules:/lib/modules
+      # Persist configuration if needed, though mostly ephemeral in this design
+      - ./node-data:/etc/wireguard
+    environment:
+      - NODE_ENV=production
+      - PLATFORM_URL=${PLATFORM_URL:-https://api.x4pn.com}
+      - NODE_ID=${NODE_ID:-node_01}
+      - NODE_PRIVATE_KEY=${NODE_PRIVATE_KEY}
+      - WG_INTERFACE=wg0
+      - WG_PORT=51820
+      - WG_IP=${WG_IP:-10.8.0.1/24}
+    ports:
+      - "51820:51820/udp"

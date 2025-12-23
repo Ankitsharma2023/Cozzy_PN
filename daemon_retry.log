@@ -1,0 +1,46 @@
+
+> rest-express@1.0.0 daemon
+> cd node-daemon && npm install && npm start
+
+
+up to date, audited 54 packages in 2s
+
+12 packages are looking for funding
+  run `npm fund` for details
+
+found 0 vulnerabilities
+
+> x4pn-daemon@0.1.0 start
+> tsx src/index.ts
+
+≡ƒÜÇ Starting X4PN Node Daemon...
+OS: win32 10.0.26200
+OS: win32 10.0.26200
+------------ SIMULATION MODE ------------
+Real WireGuard interfaces require Linux kernel modules.
+Simulating Daemon behavior for development...
+Γ£à [Sim] Loaded Private Key. Address: 0x476370AFb80A959Cee73821e04dBB5e71F97A58D
+[Sim] Connecting to http://localhost:5000...
+[Platform] Initializing connection to http://localhost:5000
+[Platform] Operator Address: 0x476370AFb80A959Cee73821e04dBB5e71F97A58D
+[Platform] Connected with ID: PmOfNHAbgMzs_Gs3AAAL
+[Platform] Sending identity...
+[Platform] Received challenge. Signing...
+[Platform] Γ£à Authenticated successfully. Status: active
+[Sim] Heartbeat sent. Active Peers: 0
+[Sim] Heartbeat sent. Active Peers: 0
+[Sim] Heartbeat sent. Active Peers: 0
+[Sim] Heartbeat sent. Active Peers: 0
+[Sim] Heartbeat sent. Active Peers: 0
+[Sim] Heartbeat sent. Active Peers: 0
+[Sim] Heartbeat sent. Active Peers: 0
+[Sim] Heartbeat sent. Active Peers: 0
+[Sim] Heartbeat sent. Active Peers: 0
+[Sim] Heartbeat sent. Active Peers: 0
+[Sim] Heartbeat sent. Active Peers: 0
+[Sim] Heartbeat sent. Active Peers: 0
+[Sim] Heartbeat sent. Active Peers: 0
+[Sim] Heartbeat sent. Active Peers: 0
+[Sim] Heartbeat sent. Active Peers: 0
+[Sim] Heartbeat sent. Active Peers: 0
+[Sim] Heartbeat sent. Active Peers: 0

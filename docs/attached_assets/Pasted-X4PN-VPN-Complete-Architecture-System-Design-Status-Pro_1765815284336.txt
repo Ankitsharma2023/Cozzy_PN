@@ -1,0 +1,437 @@
+X4PN VPN: Complete
+Architecture & System Design
+Status: Production-Ready Design
+Scope: Full decentralized VPN with stablecoin payments
+ SYSTEM ARCHITECTURE OVERVIEW
+┌─────────────────────────────────────────────────────────────────┐
+│ USER LAYER (Chrome Extension) │
+│ ┌────────────────────────────────────────────────────────────┐ │
+│ │ MetaMask Server List Balance Connect/Disconnect │ │
+│ │ Wallet UI Display Buttons │ │
+│ └──────────────────────┬─────────────────────────────────────┘ │
+│ │ │
+│ HTTPS / WS │
+│ │ │
+└─────────────────────────┼───────────────────────────────────────┘
+ │
+ ▼
+┌─────────────────────────────────────────────────────────────────┐
+│ APPLICATION LAYER (Node Agent) │
+│ ┌────────────────────────────────────────────────────────────┐ │
+│ │ API Endpoints: │ │
+│ │ • POST /api/getConfig → WireGuard config │ │
+│ │ • POST /api/sessionStart → Session creation │ │
+│ │ • POST /api/sessionEnd → Session termination │ │
+│ │ • GET /api/status → Node status │ │
+│ │ • GET /api/earnings → Node earnings │ │
+│ └───────────────────────┬────────────────────────────────────┘ │
+│ │ │
+│ ┌──────┴──────┐ │
+│ ▼ ▼ │
+│ ┌─────────────┐ ┌──────────────┐ │
+│ │ WireGuard │ │ x402 Payment │ │
+│ │ Manager │ │ Handler │ │
+│ └──────┬──────┘ └──────┬───────┘ │
+│ │ │ │
+│ [VPN Tunnels] [Settlement Logic] │
+│ │ │ │
+└─────────────────┼────────────────┼───────────────────────────────┘
+ │ │
+ │ │ JSON RPC Calls
+ │ │
+ ▼ ▼
+┌─────────────────────────────────────────────────────────────────┐
+│ BLOCKCHAIN LAYER (Polygon Mumbai) │
+│ ┌────────────────────────────────────────────────────────────┐ │
+│ │ Smart Contracts (Solidity): │ │
+│ │ │ │
+│ │ ┌──────────────────────────────────────────────────────┐ │ │
+│ │ │ X4PNVpnSessions │ │ │
+│ │ │ • depositUsdc() → Deposit stablecoins │ │ │
+│ │ │ • startSession() → Initialize VPN session │ │ │
+│ │ │ • settleSession() → x402 micro-payment │ │ │
+│ │ │ • endSession() → Terminate VPN session │ │ │
+│ │ │ • registerNode() → Register VPN node │ │ │
+│ │ │ • withdrawUsdc() → Withdraw earnings │ │ │
+│ │ │ • withdrawX4pn() → Withdraw X4PN rewards │ │ │
+│ │ └──────────────────────────────────────────────────────┘ │ │
+│ │ │ │
+│ │ ┌──────────────────────────────────────────────────────┐ │ │
+│ │ │ X4PNToken (ERC20) │ │ │
+│ │ │ • transfer() → Transfer X4PN │ │ │
+│ │ │ • mint() → Create new X4PN (rewards) │ │ │
+│ │ │ • burn() → Remove X4PN from supply │ │ │
+│ │ └──────────────────────────────────────────────────────┘ │ │
+│ └────────────────────────────────────────────────────────────┘ │
+│ │
+│ Storage (on-chain): │
+│ • User balances (USDC) │
+│ • User balances (X4PN) │
+│ • Active sessions │
+│ • Node registry │
+└─────────────────────────────────────────────────────────────────┘
+ │
+ Polygon Mainnet
+ (USDC, X4PN tokens)
+ DATA FLOW: USER CONNECTING TO
+VPN
+Sequence Diagram: Complete User Journey
+User Chrome Node Smart
+(Browser) Extension Agent Contract
+ │ │ │ │
+ │ 1. Click │ │ │
+ │ "Connect" │ │ │
+ ├────────────────>│ │ │
+ │ │ │ │
+ │ │ 2. GET balance │ │
+ │ │ │ │
+ │ │ 3. User confirms │ │
+ │ │ startSession() │ │
+ │ │ │ │
+ │ │ 4. Send txn │ │
+ │ │ startSession() │ │
+ │ │ │────────────────>│
+ │ │ │ │
+ │ │ │<─ sessionId ───│
+ │ │<─────────────────┤ │
+ │ │ │ │
+ │ 5. Show │ │ │
+ │ "Connecting" │ │ │
+ │<────────────────┤ │ │
+ │ │ │ │
+ │ │ 6. POST getConfig│ │
+ │ ├─────────────────>│ │
+ │ │ │ │
+ │ │<─WG config + key─┤ │
+ │ │<─────────────────┤ │
+ │ │ │ │
+ │ 7. Launch │ │ │
+ │ WireGuard │ │ │
+ │ with config │ │ │
+ │<────────────────┤ │ │
+ │ │ │ 8. Listen to │
+ │ │ │ SessionStarted│
+ │ │ │ event │
+ │ │ │ │
+ │ 9. Connected! │ │ 9. Create peer │
+ │ (tunnel active) │<─────────────────┤ │
+ │<────────────────┤ │ │
+ │ │ │ 10. Every 60s: │
+ │ [Using VPN] │ │ Calculate fee │
+ │ (browsing) │ │ Call settle() │
+ │ │ │────────────────>│
+ │ │ │ │ Deduct
+ │ │ │ │ USDC
+ │ │ │<─ txn complete ┤
+ │ │ │ Pay node fee │
+ │ │ │ Award X4PN │
+ │ │ │ │
+ │ 11. Click │ │ │
+ │ "Disconnect" │ │ │
+ ├────────────────>│ │ │
+ │ │ │ │
+ │ │ 12. Final settle │ │
+ │ │────────────────>│──────────────────>│
+ │ │ │ Final payment │
+ │ │ │<────────────────┤
+ │ │ │ │
+ │ │ 13. Kill WG peer │ │
+ │ │<─────────────────┤ │
+ │ │ │ │
+ │ 14. Disconnected│ │ │
+ │<────────────────┤ │ │
+ │ │ │ │
+ │ 15. Show stats: │ │ │
+ │ Duration: 5m │ │ │
+ │ Cost: $0.06 │ │ │
+ │ Earned: 600 X4PN│ │ │
+ │<────────────────┤ │ │
+ │ │ │ │
+ PAYMENT FLOW: How x402 Powers
+Everything
+┌─────────────────────────────────────────────────────────────────┐
+│ PAYMENT SETTLEMENT LOOP │
+│ (Every 60 seconds) │
+└─────────────────────────────────────────────────────────────────┘
+Time: 0s
+┌──────────────────────┐
+│ User starts VPN │
+│ Balance: $10 USDC │
+│ Rate: $0.10/minute │
+└──────────────────────┘
+Time: 60s
+┌──────────────────────────────────────────────────┐
+│ 1. Node detects 60 seconds elapsed │
+│ 2. Calculate fee: 60s × ($0.10/60) = $0.01 │
+│ 3. Check user balance: $10 > $0.01 ✓ │
+└──────────────────────────────────────────────────┘
+ │
+ ▼
+┌──────────────────────────────────────────────────┐
+│ Call smart contract: settleSession() │
+│ • sessionId: 1 │
+│ • timeElapsedSeconds: 60 │
+└──────────────────────────────────────────────────┘
+ │
+ ▼ x402 protocol
+┌──────────────────────────────────────────────────┐
+│ On-Chain Settlement (blockchain) │
+│ │
+│ User balance: $10.00 │
+│ Deduct: -$0.01 │
+│ ──────────────────── │
+│ New balance: $9.99 │
+│ │
+│ Node operator earned: │
+│ • USDC: $0.008 (80% of fee) │
+│ • X4PN: 100 tokens (($0.01 × 10)) │
+│ │
+│ Protocol treasury: │
+│ • USDC: $0.002 (20% of fee) │
+└──────────────────────────────────────────────────┘
+ │
+ ▼
+Time: 120s
+┌──────────────────────────────────────────────────┐
+│ Settlement happens again (60s passed) │
+│ Fee: $0.01 │
+│ User balance: $9.99 → $9.98 │
+│ Node earned: +$0.008 USDC, +100 X4PN │
+└──────────────────────────────────────────────────┘
+...continues every 60 seconds until:
+- User clicks disconnect, OR
+- User balance reaches $0
+ TOKEN ECONOMICS: USDC vs X4PN
+┌─────────────────────────────────────────────────────────────────┐
+│ TWO-TOKEN SYSTEM EXPLAINED │
+└─────────────────────────────────────────────────────────────────┘
+USDC (Stablecoin)
+├─ Purpose: PAYMENTS (required)
+├─ Price: Always $1.00
+├─ Use: Pay for VPN minutes
+├─ Where: User deposits, node earnings, protocol fees
+├─ Liquidity: Everywhere (Uniswap, Coinbase, etc.)
+└─ Volatility: ZERO ✓ (Network survives if X4PN crashes)
+X4PN (Governance Token)
+├─ Purpose: REWARDS & GOVERNANCE (optional)
+├─ Price: Market-determined (trades on Uniswap)
+├─ Use: Claim earnings, vote on protocol changes
+├─ Where: User rewards, node rewards, light node staking
+├─ Supply: 1 billion total (capped)
+└─ Volatility: HIGH (but network still works if $0)
+────────────────────────────────────────────────────────────────
+WHY THIS WORKS:
+ Network = USDC (stable, predictable)
+ Incentives = X4PN (volatile, speculative)
+ User can:
+ • Only use USDC and ignore X4PN = Network still works
+ • Earn X4PN and hodl = Earn extra yield if X4PN appreciates
+ • Sell X4PN for profit = If X4PN pumps, early users profit
+ This is why Mysterium failed:
+ • Mysterium made MYST = only payment token
+ • MYST had no liquidity
+ • Network broke when MYST crashed
+ • Users couldn't withdraw earnings
+ X4PN is different:
+ • USDC = always liquid, always $1
+ • X4PN = optional reward, can be $0 and network still works
+ SETTLEMENT LIFECYCLE: In Detail
+Session Lifetime:
+┌────────────────────────────────────────────────────────────────┐
+│ PHASE 1: Initiation (User clicks "Connect") │
+├────────────────────────────────────────────────────────────────┤
+│ │
+│ User Action: startSession(node, rate) │
+│ │ │
+│ ├─> Check: Node active? ✓ │
+│ ├─> Check: Rate >= min? ✓ │
+│ ├─> Check: User has USDC balance? ✓ │
+│ │ │
+│ └─> Create on-chain: │
+│ Session { │
+│ sessionId: 1, │
+│ user: 0xUser, │
+│ node: 0xNode, │
+│ rate: 0.1 USDC/min (per second), │
+│ startedAt: block.timestamp, │
+│ lastSettledAt: block.timestamp, │
+│ active: true │
+│ } │
+│ │
+│ Event Emitted: SessionStarted(sessionId=1, user, node, rate) │
+│ │
+│ Node Agent hears event → Creates WireGuard peer │
+│ │
+└────────────────────────────────────────────────────────────────┘
+ ▼
+┌────────────────────────────────────────────────────────────────┐
+│ PHASE 2: Active Usage (User browsing through VPN) │
+├────────────────────────────────────────────────────────────────┤
+│ │
+│ User Status: browsing, video streaming, etc. │
+│ Duration: Can be 5 minutes, 1 hour, etc. │
+│ │
+│ Node Agent Activity (every 60 seconds): │
+│ │
+│ [t=60s] Calculate fee: │
+│ elapsedSeconds = 60 │
+│ rate = 0.1 USDC/min = 0.00167 USDC/sec │
+│ fee = 60 × 0.00167 = 0.1 USDC │
+│ │
+│ Check balance: User has $5 USDC > $0.1 ✓ │
+│ │
+│ Call: settleSession(sessionId=1, 60) │
+│ │ │
+│ ├─> Update session.lastSettledAt = now │
+│ │ │
+│ ├─> Deduct user balance: │
+│ │ usdcBalances[user] -= 0.1 USDC │
+│ │ ($5.00 → $4.90) │
+│ │ │
+│ ├─> Pay node operator: │
+│ │ usdcBalances[node] += 0.08 USDC (80%) │
+│ │ │
+│ ├─> Protocol fee: │
+│ │ usdcBalances[admin] += 0.02 USDC (20%) │
+│ │ │
+│ ├─> Award X4PN rewards: │
+│ │ x4pnBalances[user] += 1.0 X4PN (0.1 × 10) │
+│ │ x4pnBalances[node] += 0.5 X4PN (half) │
+│ │ │
+│ └─> Emit: SessionSettled(...) │
+│ │
+│ [t=120s] Settlement again... │
+│ (same calculation, every 60 seconds) │
+│ │
+│ [t=180s] Settlement again... │
+│ │
+└────────────────────────────────────────────────────────────────┘
+ ▼
+┌────────────────────────────────────────────────────────────────┐
+│ PHASE 3: Termination (User clicks "Disconnect") │
+├────────────────────────────────────────────────────────────────┤
+│ │
+│ User Action: endSession(sessionId=1) │
+│ │ │
+│ ├─> Final settlement: │
+│ │ (if user has remaining time since last settlement) │
+│ │ settleSession(sessionId, timeSinceLastSettlement) │
+│ │ │
+│ ├─> Update session: │
+│ │ session.active = false │
+│ │ │
+│ ├─> Event: SessionEnded(sessionId=1) │
+│ │ │
+│ └─> Node agent hears event: │
+│ └─> Delete WireGuard peer │
+│ └─> Tunnel closes │
+│ │
+│ User sees final stats: │
+│ ├─ Connected for: 3 minutes 5 seconds │
+│ ├─ Total cost: $0.30 USDC │
+│ ├─ Total earned: 3.0 X4PN │
+│ ├─ Current balance: $4.70 USDC, 3.0 X4PN │
+│ └─ Status: "Disconnected" │
+│ │
+└────────────────────────────────────────────────────────────────┘
+ SECURITY: How We Prevent Fraud
+Threat Model & Mitigations:
+┌──────────────────────────────────────────────────────────────┐
+│ THREAT: User claims they used VPN but actually didn't │
+├──────────────────────────────────────────────────────────────┤
+│ MITIGATION: │
+│ ✓ Node controls time measurement (on node side) │
+│ ✓ User cannot fake WireGuard tunnel (requires cryptography) │
+│ ✓ WireGuard validates all packets (built-in security) │
+│ ✓ Settlement time measured by node, not user │
+└──────────────────────────────────────────────────────────────┘
+┌──────────────────────────────────────────────────────────────┐
+│ THREAT: Node claims higher usage than actually occurred │
+├──────────────────────────────────────────────────────────────┤
+│ MITIGATION: │
+│ ✓ User has WireGuard logs (proof of tunnel) │
+│ ✓ Light nodes verify settlement claims │
+│ ✓ Slashing: False reports lose stake │
+│ ✓ Reputation system: Bad nodes get voted out │
+└──────────────────────────────────────────────────────────────┘
+┌──────────────────────────────────────────────────────────────┐
+│ THREAT: Smart contract is hacked │
+├──────────────────────────────────────────────────────────────┤
+│ MITIGATION: │
+│ ✓ OpenZeppelin audited contracts │
+│ ✓ ReentrancyGuard on all payment functions │
+│ ✓ Rate limiting on settlement frequency │
+│ ✓ Separate admin key (multisig recommended) │
+│ ✓ Pause functionality if exploit discovered │
+└──────────────────────────────────────────────────────────────┘
+┌──────────────────────────────────────────────────────────────┐
+│ THREAT: Someone steals private keys │
+├──────────────────────────────────────────────────────────────┤
+│ MITIGATION: │
+│ ✓ Never store keys in code or .env in production │
+│ ✓ Use hardware wallets for nodes │
+│ ✓ Node private key stored in secure enclave │
+│ ✓ User keys in MetaMask (isolated from website) │
+└──────────────────────────────────────────────────────────────┘
+ SCALING PLAN
+Scaling Layers:
+Layer 1: Single Server (MVP - Now)
+ ├─ 1 VPN server
+ ├─ Handles: 100 concurrent users
+ ├─ Cost: $5-10/month
+ └─ RPM (revenue per month): $300 @ 100 users
+Layer 2: Multi-Server (Week 4)
+ ├─ 10 VPN servers (global distribution)
+ ├─ Handles: 10,000 concurrent users
+ ├─ Cost: $500-1000/month
+ └─ RPM: $30,000 @ 10K users
+Layer 3: Edge Network (Week 12)
+ ├─ 50+ edge nodes (community-operated)
+ ├─ Handles: 100,000 concurrent users
+ ├─ Cost: $2000/month (own) + incentives to community
+ └─ RPM: $300,000 @ 100K users
+Layer 4: Decentralized Mesh (Week 24+)
+ ├─ 1000+ peer nodes (fully decentralized)
+ ├─ Handles: 1,000,000+ concurrent users
+ ├─ Cost: Fully incentivized (users earn X4PN)
+ └─ RPM: $3M+ @ 1M users
+───────────────────────────────────────────────────────────────
+Each layer is built on previous one.
+Users never notice the upgrade.
+Protocol upgrades via DAO voting.
+ KEY METRICS TO TRACK
+Growth Metrics (Measure Success):
+Week 4: 4 VPN nodes | 500 installs | $5K TVL | $1.5K/mo
+Week 8: 8 VPN nodes | 5K installs | $50K TVL | $10K/mo
+Week 12: 15 VPN nodes | 50K installs | $500K TVL | $50K/mo
+Week 16: 25 VPN nodes | 100K installs | $1M TVL | $100K/mo
+Week 20: 40 VPN nodes | 500K installs | $3M TVL | $300K/mo
+Week 26: 50+ VPN nodes | 1M installs | $5M TVL | $500K/mo
+Success Indicators:
+ ✓ TVL grows 3-5x per month
+ ✓ MAU (monthly active users) growing
+ ✓ Settlement volume increasing
+ ✓ Nodes expanding globally
+ ✓ X4PN trading volume on DEX
+ ✓ DAO proposals getting high participation
+ ✓ Community nodes deploying
+ GO-LIVE CHECKLIST
+Before Mainnet:
+ All smart contracts audited
+ Node agent tested on production VPS
+ Chrome extension tested by 50+ beta users
+ End-to-end flow validated (deposit → connect → settle → earn)
+ WireGuard configs generating correctly
+ x402 settlement working without errors
+ Light node verification working
+ Admin multisig wallet set up
+ Emergency pause function tested
+ Monitoring/alerting configured
+ Team trained on incident response
+ Insurance/legal reviewed
+ ProductHunt launch page ready
+ Marketing materials prepared
+ Twitter/Discord communities active
+ Community moderators recruited
+Result: Smooth launch with zero downtime ✓
+Next: Follow the 26-week sprint to scale from MVP to mainstream VPN.
