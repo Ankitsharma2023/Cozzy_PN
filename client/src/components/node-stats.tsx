@@ -103,7 +103,7 @@ export function NodeStats({
           <div className="p-4 rounded-md bg-muted/50">
             <div className="flex items-center gap-2 text-sm text-muted-foreground mb-1">
               <Coins className="h-4 w-4" />
-              Total X4PN
+              Total COZZ
             </div>
             <p className="text-xl font-bold font-mono">
               {formatX4PN(totalEarningsX4pn)}
@@ -179,7 +179,7 @@ export function NodeStats({
                         {formatUSDC(node.totalEarnedUsdc)}
                       </p>
                       <p className="font-mono text-xs text-muted-foreground">
-                        +{formatX4PN(node.totalEarnedX4pn)} X4PN
+                        +{formatX4PN(node.totalEarnedX4pn)} COZZ
                       </p>
                     </div>
                   </TableCell>

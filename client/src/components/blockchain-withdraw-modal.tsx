@@ -151,7 +151,7 @@ export function BlockchainWithdrawModal({
                 </TabsTrigger>
                 <TabsTrigger value="x4pn" className="gap-2" data-testid="tab-x4pn">
                   <Coins className="h-4 w-4" />
-                  X4PN
+                  COZZ
                 </TabsTrigger>
               </TabsList>
               <TabsContent value="usdc" className="mt-4">
@@ -161,7 +161,7 @@ export function BlockchainWithdrawModal({
               </TabsContent>
               <TabsContent value="x4pn" className="mt-4">
                 <p className="text-sm text-muted-foreground mb-2">
-                  Available: <span className="font-mono font-medium">{formatX4PN(x4pnBalance)} X4PN</span>
+                  Available: <span className="font-mono font-medium">{formatX4PN(x4pnBalance)} COZZ</span>
                 </p>
               </TabsContent>
             </Tabs>

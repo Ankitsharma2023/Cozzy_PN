@@ -113,7 +113,7 @@ export function BlockchainDepositModal({
         <DialogHeader>
           <DialogTitle>Deposit USDC</DialogTitle>
           <DialogDescription>
-            Add USDC to your X4PN balance to use VPN services
+            Add USDC to your COZZ balance to use VPN services
           </DialogDescription>
         </DialogHeader>
 

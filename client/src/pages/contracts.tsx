@@ -65,7 +65,7 @@ export default function Contracts() {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <FileCode className="h-5 w-5" />
-              X4PN Token (ERC20)
+              COZZ Token (ERC20)
             </CardTitle>
             <CardDescription>
               The governance and rewards token for the Cozzy_PN VPN protocol

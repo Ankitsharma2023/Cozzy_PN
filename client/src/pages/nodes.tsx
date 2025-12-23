@@ -135,7 +135,7 @@ export default function Nodes() {
           testId="stat-usdc-earned"
         />
         <StatCard
-          title="Total X4PN Earned"
+          title="Total COZZ Earned"
           value={formatX4PN(totalEarningsX4pn)}
           icon={Coins}
           iconGradient="from-chart-3/20 to-chart-3/5"

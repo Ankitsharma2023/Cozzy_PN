@@ -183,7 +183,7 @@ export default function DashboardBlockchain() {
           iconGradient="from-chart-1/20 to-chart-1/5"
         />
         <StatCard
-          title="X4PN Balance"
+          title="COZZ Balance"
           value={x4pnBalance.toFixed(0)}
           subtitle="tokens"
           icon={Coins}

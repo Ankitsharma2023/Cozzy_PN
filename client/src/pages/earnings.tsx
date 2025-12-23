@@ -102,7 +102,7 @@ export default function Earnings() {
           testId="stat-usdc-available"
         />
         <StatCard
-          title="X4PN Available"
+          title="COZZ Available"
           value={formatX4PN(x4pnBalance)}
           subtitle="tokens"
           icon={Coins}
@@ -110,7 +110,7 @@ export default function Earnings() {
           testId="stat-x4pn-available"
         />
         <StatCard
-          title="Total Earned (X4PN)"
+          title="Total Earned (COZZ)"
           value={formatX4PN(totalEarned)}
           subtitle="all time"
           icon={TrendingUp}
@@ -134,11 +134,11 @@ export default function Earnings() {
             <div className="space-y-3">
               <h3 className="font-semibold flex items-center gap-2">
                 <Coins className="h-4 w-4 text-chart-2" />
-                X4PN Token Rewards
+                COZZ Token Rewards
               </h3>
               <p className="text-sm text-muted-foreground">
-                Earn X4PN tokens every time you use the VPN. For every $0.10 USDC
-                spent, you receive 1 X4PN token. These tokens can be traded on
+                Earn COZZ tokens every time you use the VPN. For every $0.10 USDC
+                spent, you receive 1 COZZ token. These tokens can be traded on
                 decentralized exchanges or held for governance.
               </p>
             </div>

@@ -210,7 +210,7 @@ export default function BlockchainDashboard() {
           testId="stat-usdc-balance"
         />
         <StatCard
-          title="X4PN Balance"
+          title="COZZ Balance"
           value={x4pnBalance.toFixed(0)}
           subtitle="tokens"
           icon={Coins}

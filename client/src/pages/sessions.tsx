@@ -76,7 +76,7 @@ export default function Sessions() {
         <StatCard
           title="Total Cost"
           value={`$${totalCost.toFixed(2)}`}
-          subtitle={`+${totalEarned.toFixed(0)} X4PN earned`}
+          subtitle={`+${totalEarned.toFixed(0)} COZZ earned`}
           icon={DollarSign}
           iconGradient="from-chart-4/20 to-chart-4/5"
           testId="stat-total-cost"

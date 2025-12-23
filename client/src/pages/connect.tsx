@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { ServerCard } from "@/components/server-card";
+import { AIReasoningModal } from "@/components/ai-reasoning-modal";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -14,7 +15,7 @@ import { Badge } from "@/components/ui/badge";
 import { useWallet } from "@/lib/wallet";
 import { useToast } from "@/hooks/use-toast";
 import { queryClient, apiRequest } from "@/lib/queryClient";
-import { Shield, Search, Filter, Loader2, Wallet } from "lucide-react";
+import { GlobeLock, Search, Filter, Loader2, Wallet, Sparkles } from "lucide-react";
 import type { Node, Session } from "@shared/schema";
 
 export default function Connect() {
@@ -23,6 +24,7 @@ export default function Connect() {
   const [selectedNodeId, setSelectedNodeId] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [regionFilter, setRegionFilter] = useState<string>("all");
+  const [showReasoningModal, setShowReasoningModal] = useState(false);
 
   const { data: nodes = [], isLoading } = useQuery<Node[]>({
     queryKey: ["/api/nodes"],
@@ -42,6 +44,7 @@ export default function Connect() {
       });
     },
     onSuccess: () => {
+      setShowReasoningModal(false);
       queryClient.invalidateQueries({ queryKey: ["/api/sessions/active", address] });
       toast({
         title: "VPN Connected",
@@ -103,7 +106,7 @@ export default function Connect() {
         <div className="flex items-center justify-center min-h-[40vh]">
           <div className="text-center space-y-4 max-w-md">
             <div className="mx-auto w-20 h-20 rounded-full bg-status-online/10 flex items-center justify-center">
-              <Shield className="h-10 w-10 text-status-online" />
+              <GlobeLock className="h-10 w-10 text-status-online" />
             </div>
             <h2 className="text-2xl font-bold">VPN Active</h2>
             {connectedNode && (
@@ -215,28 +218,28 @@ export default function Connect() {
                 );
               })()}
             </div>
-            <Button
-              size="lg"
-              className="gap-2"
-              onClick={() => connectMutation.mutate()}
-              disabled={connectMutation.isPending}
-              data-testid="button-connect-selected"
-            >
-              {connectMutation.isPending ? (
-                <>
-                  <Loader2 className="h-5 w-5 animate-spin" />
-                  Connecting...
-                </>
-              ) : (
-                <>
-                  <Shield className="h-5 w-5" />
-                  Connect
-                </>
-              )}
-            </Button>
+            <div className="flex items-center gap-2">
+              <Button
+                size="lg"
+                className="gap-2"
+                onClick={() => setShowReasoningModal(true)}
+                data-testid="button-show-reasoning"
+              >
+                <Sparkles className="h-5 w-5" />
+                Connect with AI Reasoning
+              </Button>
+            </div>
           </div>
         </div>
       )}
+
+      <AIReasoningModal
+        isOpen={showReasoningModal}
+        onClose={() => setShowReasoningModal(false)}
+        selectedNode={nodes.find((n) => n.id === selectedNodeId) || null}
+        allNodes={nodes}
+        onConnect={() => connectMutation.mutate()}
+      />
     </div>
   );
 }

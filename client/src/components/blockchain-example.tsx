@@ -146,8 +146,8 @@ export function BlockchainInteractionExample() {
       
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
         <div className="p-4 bg-muted rounded-md">
-          <h3 className="font-medium mb-2">X4PN Token Balance</h3>
-          <p className="text-2xl font-bold">{x4pnBalance} X4PN</p>
+          <h3 className="font-medium mb-2">COZZ Token Balance</h3>
+          <p className="text-2xl font-bold">{x4pnBalance} COZZ</p>
         </div>
         
         <div className="p-4 bg-muted rounded-md">

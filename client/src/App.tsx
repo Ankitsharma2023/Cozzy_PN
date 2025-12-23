@@ -60,7 +60,7 @@ function App() {
             <div className="flex min-h-screen w-full">
               <AppSidebar />
               <SidebarInset className="flex flex-col flex-1">
-                <header className="flex h-14 items-center justify-between gap-4 border-b px-4 sticky top-0 z-50 bg-background/80 backdrop-blur-sm">
+                <header className="flex h-14 items-center justify-between gap-4 border-b px-4 sticky top-0 z-50 bg-black/40 backdrop-blur-md border-white/10">
                   <SidebarTrigger data-testid="button-sidebar-toggle" />
                   <ThemeToggle />
                 </header>

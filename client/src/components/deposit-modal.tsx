@@ -12,6 +12,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { DollarSign, Loader2, CheckCircle2, AlertCircle } from "lucide-react";
 import { formatUSDC } from "@/lib/wallet";
+import { useWallet } from "@/lib/wallet";
 
 interface DepositModalProps {
   open: boolean;
@@ -28,6 +29,7 @@ export function DepositModal({
   currentBalance,
   onDeposit,
 }: DepositModalProps) {
+  const { connect } = useWallet();
   const [amount, setAmount] = useState("");
   const [step, setStep] = useState<DepositStep>("input");
   const [error, setError] = useState<string | null>(null);
@@ -42,6 +44,8 @@ export function DepositModal({
     }
 
     try {
+      setError(null);
+      await connect();
       setStep("approve");
       await new Promise((resolve) => setTimeout(resolve, 1000));
       setStep("deposit");
@@ -66,7 +70,7 @@ export function DepositModal({
         <DialogHeader>
           <DialogTitle>Deposit USDC</DialogTitle>
           <DialogDescription>
-            Add USDC to your X4PN balance to use VPN services
+            Add USDC to your COZZ balance to use VPN services
           </DialogDescription>
         </DialogHeader>
 

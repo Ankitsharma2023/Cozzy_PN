@@ -13,7 +13,6 @@ import { Label } from "@/components/ui/label";
 import { DollarSign, Loader2, CheckCircle2, AlertCircle } from "lucide-react";
 import { formatUSDC } from "@/lib/wallet";
 import { useWallet } from "@/lib/wallet";
-import { ethers } from "ethers";
 
 interface DepositModalBlockchainProps {
   open: boolean;
@@ -30,7 +29,7 @@ export function DepositModalBlockchain({
   currentBalance,
   onDeposit,
 }: DepositModalBlockchainProps) {
-  const { address, isConnected } = useWallet();
+  const { connect } = useWallet();
   const [amount, setAmount] = useState("");
   const [step, setStep] = useState<DepositStep>("input");
   const [error, setError] = useState<string | null>(null);
@@ -45,6 +44,8 @@ export function DepositModalBlockchain({
     }
 
     try {
+      setError(null);
+      await connect();
       setStep("approve");
       // In a real implementation, this would interact with the blockchain
       await new Promise((resolve) => setTimeout(resolve, 1000));
@@ -71,7 +72,7 @@ export function DepositModalBlockchain({
         <DialogHeader>
           <DialogTitle>Deposit USDC (Blockchain)</DialogTitle>
           <DialogDescription>
-            Add USDC to your X4PN balance to use VPN services directly through the blockchain
+            Add USDC to your COZZ balance to use VPN services directly through the blockchain
           </DialogDescription>
         </DialogHeader>
 

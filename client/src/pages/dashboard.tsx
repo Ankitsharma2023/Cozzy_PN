@@ -180,7 +180,7 @@ export default function Dashboard() {
           testId="stat-usdc-balance"
         />
         <StatCard
-          title="X4PN Balance"
+          title="COZZ Balance"
           value={x4pnBalance.toFixed(0)}
           subtitle="tokens"
           icon={Coins}
@@ -196,7 +196,7 @@ export default function Dashboard() {
         />
         <StatCard
           title="Total Earned"
-          value={`${totalEarned.toFixed(0)} X4PN`}
+          value={`${totalEarned.toFixed(0)} COZZ`}
           subtitle={`$${totalSpent.toFixed(2)} spent`}
           icon={TrendingUp}
           trend={12.5}

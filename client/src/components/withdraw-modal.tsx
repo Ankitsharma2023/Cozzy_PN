@@ -13,6 +13,7 @@ import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { DollarSign, Coins, Loader2, CheckCircle2, AlertCircle } from "lucide-react";
 import { formatUSDC, formatX4PN } from "@/lib/wallet";
+import { useWallet } from "@/lib/wallet";
 
 interface WithdrawModalProps {
   open: boolean;
@@ -31,6 +32,7 @@ export function WithdrawModal({
   x4pnBalance,
   onWithdraw,
 }: WithdrawModalProps) {
+  const { connect } = useWallet();
   const [token, setToken] = useState<"usdc" | "x4pn">("usdc");
   const [amount, setAmount] = useState("");
   const [step, setStep] = useState<WithdrawStep>("input");
@@ -50,6 +52,8 @@ export function WithdrawModal({
     }
 
     try {
+      setError(null);
+      await connect();
       setStep("withdraw");
       await onWithdraw(withdrawAmount, token);
       setStep("success");
@@ -90,7 +94,7 @@ export function WithdrawModal({
                 </TabsTrigger>
                 <TabsTrigger value="x4pn" className="gap-2" data-testid="tab-x4pn">
                   <Coins className="h-4 w-4" />
-                  X4PN
+                  COZZ
                 </TabsTrigger>
               </TabsList>
               <TabsContent value="usdc" className="mt-4">
@@ -100,7 +104,7 @@ export function WithdrawModal({
               </TabsContent>
               <TabsContent value="x4pn" className="mt-4">
                 <p className="text-sm text-muted-foreground mb-2">
-                  Available: <span className="font-mono font-medium">{formatX4PN(x4pnBalance)} X4PN</span>
+                  Available: <span className="font-mono font-medium">{formatX4PN(x4pnBalance)} COZZ</span>
                 </p>
               </TabsContent>
             </Tabs>

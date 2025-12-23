@@ -14,7 +14,7 @@ import {
   Sun,
   Globe,
   Bell,
-  Shield,
+  GlobeLock,
   Wallet,
   ExternalLink,
 } from "lucide-react";
@@ -166,7 +166,7 @@ export default function Settings() {
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <Shield className="h-5 w-5" />
+              <GlobeLock className="h-5 w-5" />
               Security
             </CardTitle>
             <CardDescription>
